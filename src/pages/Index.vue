@@ -26,7 +26,8 @@
         label="Name"
         width="200"
         align="left"
-        sortable>
+        sortable
+        sort-by="name">
         <template slot-scope="scope">
           <el-input
             v-if="editing === scope.row.id"
@@ -39,7 +40,8 @@
         label="Location"
         width="200"
         align="left"
-        sortable>
+        sortable
+        sort-by="location">
         <template slot-scope="scope">
           <el-input
             v-if="editing === scope.row.id"
@@ -53,7 +55,8 @@
         label="Currency"
         align="right"
         header-align="right"
-        sortable>
+        sortable
+        sort-by="currency">
         <template slot-scope="scope">
           <el-input-number
             v-if="editing === scope.row.id"
