@@ -122,7 +122,11 @@ export default {
       const filter = _.toLower(this.filter)
 
       return this.locations.filter(location => {
-        const fileds = _.values(_.pick(location, this.filterBy))
+        let fileds = _.values(_.pick(location, this.filterBy))
+
+        if (_.includes(this.filterBy, 'currency')) {
+          fileds.push(this.currencyFormat(location.currency))
+        }
 
         return fileds.filter(field => _.toLower(field).indexOf(filter) !== -1).length > 0
       })
@@ -147,7 +151,7 @@ export default {
     },
 
     currencyFormat(value) {
-      return `$${value}`.replace(/(\d)(?=(\d\d\d)+([^\d]|$))/g, '1,')
+      return `$${(value).toFixed(0).replace(/(\d)(?=(\d{3})+$)/g, '$&,')}`
     },
 
     onEdit(scope) {
