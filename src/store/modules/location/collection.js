@@ -1,9 +1,21 @@
 import Api from '@/api/location'
+import { toUSD } from '@/utils/currency'
 
 export default {
   namespaced: true,
+
   state: {
     results: []
+  },
+
+  getters: {
+    locations: state => {
+      return state.results.map(result => {
+        result.currencyUSD = toUSD(result.currency)
+
+        return result
+      })
+    }
   },
 
   mutations: {

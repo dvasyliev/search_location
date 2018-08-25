@@ -61,7 +61,7 @@
           <el-input-number
             v-if="editing === scope.row.id"
             v-model="model.currency"/>
-          <span v-else>{{ currencyFormat(scope.row.currency) }}</span>
+          <span v-else>{{ scope.row.currencyUSD }}</span>
         </template>
       </el-table-column>
 
@@ -95,8 +95,9 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { mapState, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
+import { searchBy } from '@/utils/collection'
+import { toUSD } from '@/utils/currency'
 
 export default {
   name: 'IndexPage',
@@ -107,7 +108,8 @@ export default {
       filterBy: [
         'name',
         'location',
-        'currency'
+        'currency',
+        'currencyUSD'
       ],
       editing: false,
       model: {}
@@ -115,31 +117,16 @@ export default {
   },
 
   computed: {
-    ...mapState('locations', { locations: 'results' }),
+    ...mapGetters('locations', ['locations']),
 
     locationsFiltered() {
-      if (this.filter.length === 0) {
-        return this.locations
-      }
-
-      const filter = _.toLower(this.filter)
-
-      return this.locations.filter(location => {
-        let fileds = _.values(_.pick(location, this.filterBy))
-
-        if (_.includes(this.filterBy, 'currency')) {
-          fileds.push(this.currencyFormat(location.currency))
-        }
-
-        return fileds.filter(field => _.toLower(field).indexOf(filter) !== -1).length > 0
-      })
+      return searchBy(this.locations, this.filter, this.filterBy)
     },
 
     totalCurrencyFiltered() {
-      const sum = this.locationsFiltered
-        .reduce((sum, current) => sum + current.currency, 0)
-
-      return this.currencyFormat(sum)
+      return toUSD(
+        this.locationsFiltered.reduce((sum, current) => sum + current.currency, 0)
+      )
     }
   },
 
@@ -148,14 +135,6 @@ export default {
       'fetchAllLocations',
       'updateLocation'
     ]),
-
-    currencyFormatter(row, column) {
-      return this.currencyFormat(row.currency)
-    },
-
-    currencyFormat(value) {
-      return `$${(value).toFixed(0).replace(/(\d)(?=(\d{3})+$)/g, '$&,')}`
-    },
 
     onEdit(scope) {
       this.model = Object.assign({}, scope.row)

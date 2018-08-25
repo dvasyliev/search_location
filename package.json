@@ -9,9 +9,10 @@
     "start": "npm run dev",
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js",
-    "deploy": "gh-pages -d dist"
+    "deploy": "npm run build && gh-pages -d dist"
   },
   "dependencies": {
+    "currency-formatter": "^1.4.4",
     "element-ui": "^2.4.6",
     "gh-pages": "^1.2.0",
     "node-sass": "^4.9.3",
